@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, Form
+from fastapi import APIRouter, File, UploadFile, Form, Query
 import os
 import json
 from app.services.pet_service import register_pet, find_pet
@@ -31,7 +31,10 @@ def register_pet_endpoint(
     return {"success": success}
 
 @router.post("/find/")
-def find_pet_endpoint(file: UploadFile = File(...)):
+def find_pet_endpoint(
+    file: UploadFile = File(...),
+    num_results: int = Query(1)  # Default to 1 if not provided
+):
     # Ensure the directory exists
     upload_dir = "./query_images"
     if not os.path.exists(upload_dir):
@@ -43,5 +46,5 @@ def find_pet_endpoint(file: UploadFile = File(...)):
         f.write(file.file.read())
 
     # Find the pet using the image
-    result = find_pet(image_path)
+    result = find_pet(image_path, num_results=num_results)
     return result or {"message": "No match found"}

@@ -52,8 +52,8 @@ def register_pet(image_path, pet_metadata):
         return False
 
 
-def find_pet(image_path):
-    """Find a pet by comparing an image."""
+def find_pet(image_path, num_results=1):
+    """Find pets by comparing an image, returning top N matches."""
     index = get_index()  # Ensure this returns a RedisVL SearchIndex object
     embedding = generate_embedding(image_path)
 
@@ -62,7 +62,7 @@ def find_pet(image_path):
         return {"message": "Failed to generate embedding"}
 
     try:
-        # Define a vector query
+        # Define a vector query with configurable num_results
         query = VectorQuery(
             vector=embedding.tolist(),  # Convert the embedding to a list
             vector_field_name="embedding",  # Redis field storing embeddings
@@ -83,15 +83,15 @@ def find_pet(image_path):
                 "found_status",
                 "vector_distance",
             ],
-            num_results=1,  # Limit to the closest match
+            num_results=num_results,  # Configurable number of results
         )
 
         # Perform the query
         results = index.query(query)
 
         if results:
-            logger.info(f"Found a match: {results[0]}")
-            return results[0]  # Return the closest match
+            logger.info(f"Found {len(results)} match(es).")
+            return results  # Return the top N matches
         else:
             logger.info("No match found in the database.")
             return {"message": "No match found"}
