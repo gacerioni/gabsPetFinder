@@ -1,0 +1,43 @@
+version: "0.1.0"
+
+index:
+  name: pet_index
+  prefix: pet_docs
+  storage_type: json  # Use JSON storage type explicitly
+
+fields:
+  - name: name
+    type: text                # Pet's name
+  - name: species
+    type: tag                 # Dog, Cat, etc.
+  - name: breed
+    type: tag                 # Breed of the pet
+  - name: color
+    type: tag                 # Fur color
+  - name: size
+    type: tag                 # Small, Medium, Large
+  - name: age
+    type: numeric             # Numeric for proper age-based filtering
+  - name: gender
+    type: tag                 # Male/Female
+  - name: embedding
+    type: vector              # Face embedding
+    attrs:
+      dims: 768
+      distance_metric: cosine
+      algorithm: flat
+      datatype: float32
+  - name: image_url
+    type: text                # S3 URL for the profile picture
+  - name: last_seen_location
+    type: geo                 # Redis geo field: "longitude,latitude"
+  - name: city
+    type: tag                 # City where the pet was seen
+  - name: state
+    type: tag                 # State where the pet was seen
+  - name: owner_name
+    type: text                # Owner's name
+  - name: owner_contact
+    type: text                # Email or phone
+  - name: found_status
+    type: tag                 # True/False to indicate if the pet is found

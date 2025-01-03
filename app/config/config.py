@@ -1,5 +1,7 @@
 import os
 
+from pydantic.v1 import BaseSettings
+
 
 class Config:
     # Redis Configuration
@@ -10,11 +12,11 @@ class Config:
 
     # Redis Search Index Schema for Pets
     REDIS_VL_SCHEMA_FILE = os.getenv(
-        "REDIS_VL_SCHEMA_FILE", "./schemas/pet_schema.yaml"
+        "REDIS_VL_SCHEMA_FILE", "../schemas/pet_schema.yaml"
     )  # Path to the YAML schema file
 
     # AWS S3 Configuration
-    AWS_REGION = os.getenv("AWS_REGION", "sa-east-1")  # Default region for AWS services
+    AWS_REGION = os.getenv("AWS_REGION", "us-east-1")  # Default region for AWS services
     S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "gabs-lost-pet-bucket")  # S3 bucket name
     S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY", "")  # Optional: AWS Access Key for S3
     S3_SECRET_KEY = os.getenv("S3_SECRET_KEY", "")  # Optional: AWS Secret Key for S3
@@ -39,3 +41,19 @@ class Config:
         "1",
         "yes",
     ]  # Enable geolocation indexing for pets
+
+class Settings(BaseSettings):
+    """
+    Settings class that extends Config and allows validation through Pydantic.
+    Also loads environment variables as needed.
+    """
+
+    # Define attributes to allow IDE auto-completion
+    host: str = "0.0.0.0"
+    port: int = 8000
+    debug: bool = False
+    reload: bool = False
+
+    class Config:
+        env_prefix = "APP_"  # Environment variable prefix for settings
+        case_sensitive = True
